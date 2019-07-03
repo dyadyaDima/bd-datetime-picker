@@ -1,5 +1,5 @@
 /*
- * bd-datetime-picker v0.1.1
+ * bd-datetime-picker v0.1.2
  * https://github.com/dyadyaDima/bd-datetime-picker.git
  *
  * (c) 2019
@@ -1613,29 +1613,42 @@ var Portal = function (_Component) {
   return Portal;
 }(React.Component);
 
+// import {findDOMNode} from 'react-dom';
 var Trigger = function (_Component) {
   inherits(Trigger, _Component);
 
   function Trigger() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
     classCallCheck(this, Trigger);
 
-    var _this = possibleConstructorReturn(this, (Trigger.__proto__ || Object.getPrototypeOf(Trigger)).call(this));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    _this.handleDocumentClick = function (evt) {
-      if (!ReactDOM.findDOMNode(_this).contains(evt.target)) {
+    return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = Trigger.__proto__ || Object.getPrototypeOf(Trigger)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+      isOpen: false,
+      pos: {}
+    }, _this.pickerRef = React__default.createRef(), _this.handleDocumentClick = function (evt) {
+      if (!evt.target) {
+        return;
+      }
+
+      if (_this.pickerRef.current && !_this.pickerRef.current.contains(evt.target)) {
         _this.togglePicker(false);
       }
-    };
-
-    _this.handlePortalPosition = function () {
+      /*if (!findDOMNode(this).contains(evt.target)) {
+        this.togglePicker(false);
+      }*/
+    }, _this.handlePortalPosition = function () {
       if (_this.state.isOpen) {
         _this.setState({
           pos: _this.getPosition()
         });
       }
-    };
-
-    _this.handleChange = function (moment$$1, currentPanel) {
+    }, _this.handleChange = function (moment$$1, currentPanel) {
       var _this$props = _this.props,
           closeOnSelectDay = _this$props.closeOnSelectDay,
           onChange = _this$props.onChange;
@@ -1648,9 +1661,7 @@ var Trigger = function (_Component) {
       }
 
       onChange && onChange(moment$$1);
-    };
-
-    _this.togglePicker = function (isOpen) {
+    }, _this.togglePicker = function (isOpen) {
       var disabled = _this.props.disabled;
 
 
@@ -1659,10 +1670,10 @@ var Trigger = function (_Component) {
       _this.setState({
         isOpen: isOpen,
         pos: _this.getPosition()
+      }, function () {
+        window[!isOpen ? 'removeEventListener' : 'addEventListener']('click', _this.handleDocumentClick, false);
       });
-    };
-
-    _this.getPosition = function () {
+    }, _this.getPosition = function () {
       var elem = _this.refs.trigger;
       var elemBCR = elem.getBoundingClientRect();
 
@@ -1670,9 +1681,7 @@ var Trigger = function (_Component) {
         top: Math.round(elemBCR.top + elemBCR.height),
         left: Math.round(elemBCR.left)
       };
-    };
-
-    _this._renderPortal = function () {
+    }, _this._renderPortal = function () {
       var _this$state = _this.state,
           pos = _this$state.pos,
           isOpen = _this$state.isOpen;
@@ -1689,28 +1698,21 @@ var Trigger = function (_Component) {
         { style: style },
         _this._renderPicker(true)
       );
-    };
-
-    _this._renderPicker = function (isOpen) {
+    }, _this._renderPicker = function (isOpen) {
       var props = blacklist(_this.props, 'className', 'appendToBody', 'children', 'onChange');
 
       return React__default.createElement(Picker, _extends({}, props, {
         className: 'datetime-picker-popup',
         isOpen: isOpen,
-        onChange: _this.handleChange }));
-    };
-
-    _this.state = {
-      isOpen: false,
-      pos: {}
-    };
-    return _this;
+        onChange: _this.handleChange
+      }));
+    }, _temp), possibleConstructorReturn(_this, _ret);
   }
 
   createClass(Trigger, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      window.addEventListener('click', this.handleDocumentClick, false);
+      // window.addEventListener('click', this.handleDocumentClick, false);
 
       if (this.props.appendToBody) {
         window.addEventListener('scroll', this.handlePortalPosition, false);
@@ -1720,7 +1722,7 @@ var Trigger = function (_Component) {
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      window.removeEventListener('click', this.handleDocumentClick, false);
+      // window.removeEventListener('click', this.handleDocumentClick, false);
 
       if (this.props.appendToBody) {
         window.removeEventListener('scroll', this.handlePortalPosition, false);
@@ -1733,13 +1735,14 @@ var Trigger = function (_Component) {
       var _props = this.props,
           children = _props.children,
           appendToBody = _props.appendToBody,
-          className = _props.className;
+          _props$className = _props.className,
+          className = _props$className === undefined ? '' : _props$className;
       var isOpen = this.state.isOpen;
 
 
       return React__default.createElement(
         'div',
-        { className: 'datetime-trigger ' + className },
+        { className: 'datetime-trigger ' + className, ref: this.pickerRef },
         React__default.createElement(
           'div',
           { onClick: this.togglePicker.bind(this, !isOpen), ref: 'trigger' },
