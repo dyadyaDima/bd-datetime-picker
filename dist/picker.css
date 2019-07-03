@@ -4,36 +4,61 @@
 .datetime-picker {
   position: relative;
   border: 1px solid #dbdbdb;
-  background-color: #fff;
-  border-radius: 4px;
+  background-color: #3C3C3C;
   font-family: Tahoma, sans-serif;
   font-size: 14px;
-  color: #4a4a4a;
+  color: #A2A2A2;
   width: 250px;
   box-sizing: content-box;
   z-index: 100;
 }
 .datetime-picker .calendar .calendar-nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
   border-bottom: 1px solid #efefef;
   min-height: 32px;
   padding: 4px;
+  background-color: #E06965;
+  color: #fff;
+}
+.datetime-picker .calendar .calendar-nav .control {
+  display: flex;
+  align-items: center;
 }
 .datetime-picker .calendar .calendar-nav button {
   background: none;
   border: 0;
-  width: 32px;
-  height: 32px;
+  width: 15px;
+  height: 15px;
   border-radius: 4px;
   outline: none;
   cursor: pointer;
 }
-.datetime-picker .calendar .calendar-nav button .fa {
-  font-size: 18px;
+.datetime-picker .calendar .calendar-nav button.arrow {
+  position: relative;
 }
-.datetime-picker .calendar .calendar-nav button:hover {
-  background-color: #f0f0f0;
+.datetime-picker .calendar .calendar-nav button.arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid transparent;
+  transform: translate(-50%, -50%);
+}
+.datetime-picker .calendar .calendar-nav button.arrow.next::before {
+  border-left: 3px solid #fff;
+}
+.datetime-picker .calendar .calendar-nav button.arrow.prev::before {
+  border-right: 3px solid #fff;
+}
+.datetime-picker .calendar .calendar-nav button.btn-time {
+  font-size: 20px;
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  padding: 0;
 }
 .datetime-picker .calendar .calendar-nav .current-date {
   display: flex;
@@ -66,7 +91,7 @@
   flex-wrap: wrap;
 }
 .datetime-picker .calendar table thead th {
-  color: #FF9A19;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +122,7 @@
 .datetime-picker .calendar table tbody tr td.prev,
 .datetime-picker .calendar table tbody tr td.next,
 .datetime-picker .calendar table tbody tr td.disabled {
-  color: #dedede;
+  color: #515151;
 }
 .datetime-picker .calendar table tbody tr td.prev:hover,
 .datetime-picker .calendar table tbody tr td.next:hover,
@@ -110,16 +135,16 @@
   cursor: not-allowed;
 }
 .datetime-picker .calendar table tbody tr td.now {
-  color: #5cc4ef;
+  color: #fff;
   font-weight: 400;
 }
 .datetime-picker .calendar table tbody tr td.selected {
-  background-color: #5cc4ef;
+  background-color: rgba(255, 255, 255, 0.3);
   color: #fff;
   font-weight: 400;
 }
 .datetime-picker .calendar table tbody tr td.selected:hover {
-  background-color: #53c1ee;
+  background-color: #c7c7c7;
   color: #fff;
 }
 .datetime-picker .calendar table tbody tr td.selected.start {
