@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames/bind';
 
 import {range as arrayRange, chunk} from '../utils';
-import Time                         from './Time';
+import Time                         from './Time.jsx';
 
 
 class Day extends Component {

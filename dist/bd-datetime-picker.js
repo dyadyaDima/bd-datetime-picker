@@ -1,14 +1,14 @@
 /*
- * rc-datetime-picker v1.6.1
- * https://github.com/AllenWooooo/rc-datetime-picker
+ * bd-datetime-picker v0.1.1
+ * https://github.com/dyadyaDima/bd-datetime-picker.git
  *
- * (c) 2018 Allen Wu
+ * (c) 2019
  * License: MIT
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react'), require('classnames/bind'), require('blacklist'), require('moment'), require('react-slider'), require('react-dom')) :
 	typeof define === 'function' && define.amd ? define(['exports', 'react', 'classnames/bind', 'blacklist', 'moment', 'react-slider', 'react-dom'], factory) :
-	(factory((global['rc-datetime-picker'] = {}),global.React,global.classNames,global.blacklist,global.moment,global.ReactSlider,global.ReactDOM));
+	(factory((global['bd-datetime-picker'] = {}),global.React,global.classNames,global.blacklist,global.moment,global.ReactSlider,global.ReactDOM));
 }(this, (function (exports,React,classNames,blacklist,moment,ReactSlider,ReactDOM) { 'use strict';
 
 var React__default = 'default' in React ? React['default'] : React;
@@ -17,14 +17,6 @@ blacklist = blacklist && blacklist.hasOwnProperty('default') ? blacklist['defaul
 moment = moment && moment.hasOwnProperty('default') ? moment['default'] : moment;
 ReactSlider = ReactSlider && ReactSlider.hasOwnProperty('default') ? ReactSlider['default'] : ReactSlider;
 var ReactDOM__default = 'default' in ReactDOM ? ReactDOM['default'] : ReactDOM;
-
-var WEEKS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var DAY_FORMAT = 'MMMM, YYYY';
-var CONFIRM_BUTTON_TEXT = 'Confirm';
-var START_DATE_TEXT = 'Start Date:';
-var END_DATE_TEXT = 'End Date:';
-var CUSTOM_BUTTON_TEXT = 'Custom';
 
 var range = function range(start, end) {
   var length = Math.max(end - start, 0);
@@ -130,60 +122,173 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+var Time = function (_Component) {
+  inherits(Time, _Component);
+
+  function Time(props) {
+    classCallCheck(this, Time);
+
+    var _this = possibleConstructorReturn(this, (Time.__proto__ || Object.getPrototypeOf(Time)).call(this, props));
+
+    _initialiseProps.call(_this);
+
+    _this.state = {
+      moment: _this.getCurrentMoment(props)
+    };
+    return _this;
+  }
+
+  createClass(Time, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(props) {
+      this.setState({
+        moment: this.getCurrentMoment(props)
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _moment = this.state.moment;
+      var style = this.props.style;
+
+
+      return React__default.createElement(
+        'div',
+        { style: style },
+        React__default.createElement(
+          'div',
+          { className: 'time' },
+          React__default.createElement(
+            'div',
+            { className: 'show-time' },
+            React__default.createElement(
+              'span',
+              { className: 'text' },
+              _moment.format('HH')
+            ),
+            React__default.createElement(
+              'span',
+              { className: 'separater' },
+              ':'
+            ),
+            React__default.createElement(
+              'span',
+              { className: 'text' },
+              _moment.format('mm')
+            )
+          ),
+          React__default.createElement(
+            'div',
+            { className: 'sliders' },
+            React__default.createElement(
+              'span',
+              { className: 'slider-text' },
+              'Hours:'
+            ),
+            React__default.createElement(ReactSlider, { min: 0, max: 23, value: _moment.hour(), onChange: this.handleChange.bind(this, 'hours'), withBars: true }),
+            React__default.createElement(
+              'span',
+              { className: 'slider-text' },
+              'Minutes:'
+            ),
+            React__default.createElement(ReactSlider, { min: 0, max: 59, value: _moment.minute(), onChange: this.handleChange.bind(this, 'minutes'), withBars: true })
+          )
+        )
+      );
+    }
+  }]);
+  return Time;
+}(React.Component);
+
+var _initialiseProps = function _initialiseProps() {
+  var _this2 = this;
+
+  this.getCurrentMoment = function (props) {
+    var range = props.range,
+        rangeAt = props.rangeAt;
+
+    var result = props.moment;
+
+    if (result) {
+      if (range) {
+        result = result[rangeAt] || moment().hours(0).minutes(0);
+      }
+    } else {
+      result = moment().hours(0).minutes(0);
+    }
+
+    return result;
+  };
+
+  this.handleChange = function (type, value) {
+    var _props = _this2.props,
+        onChange = _props.onChange,
+        range = _props.range,
+        rangeAt = _props.rangeAt;
+
+    var _moment = _this2.state.moment.clone();
+    var selected = _this2.props.moment;
+
+    _moment[type](value);
+
+    if (range) {
+      var copyed = selected ? Object.assign(selected, {}) : {};
+
+      copyed[rangeAt] = _moment;
+    } else {
+      selected = _moment;
+    }
+
+    _this2.setState({
+      moment: _moment
+    }, _this2.props.onSelect(_moment));
+    onChange && onChange(selected);
+  };
+};
+
 var Day = function (_Component) {
   inherits(Day, _Component);
 
-  function Day(props) {
+  function Day() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
     classCallCheck(this, Day);
 
-    var _this = possibleConstructorReturn(this, (Day.__proto__ || Object.getPrototypeOf(Day)).call(this, props));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    _this.changeMonth = function (dir) {
-      var _moment = _this.state.moment.clone();
-
-      _this.setState({
-        moment: _moment[dir === 'prev' ? 'subtract' : 'add'](1, 'month')
-      });
-    };
-
-    _this.select = function (day, isSelected, isDisabled, isPrevMonth, isNextMonth) {
+    return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = Day.__proto__ || Object.getPrototypeOf(Day)).call.apply(_ref, [this].concat(args))), _this), _this.select = function (day, isSelected, isDisabled, isPrevMonth, isNextMonth) {
       if (isDisabled) return;
-      var _this$props = _this.props,
-          range$$1 = _this$props.range,
-          onSelect = _this$props.onSelect;
+      var onSelect = _this.props.onSelect;
 
-      var _moment = _this.state.moment.clone();
+      var _moment = _this.props.moment.clone();
 
       if (isPrevMonth) _moment.subtract(1, 'month');
       if (isNextMonth) _moment.add(1, 'month');
 
       _moment.date(day);
 
-      _this.setState({
-        moment: range$$1 ? _this.state.moment : _moment
-      });
       onSelect(_moment);
-    };
-
-    _this._renderWeek = function (week) {
+    }, _this._renderWeek = function (week) {
       return React__default.createElement(
         'th',
         { key: week },
         week
       );
-    };
-
-    _this._renderDay = function (week, day) {
-      var _this$props2 = _this.props,
-          maxDate = _this$props2.maxDate,
-          minDate = _this$props2.minDate,
-          range$$1 = _this$props2.range,
-          rangeAt = _this$props2.rangeAt,
-          selected = _this$props2.selected,
-          dateLimit = _this$props2.dateLimit;
+    }, _this._renderDay = function (week, day) {
+      var _this$props = _this.props,
+          maxDate = _this$props.maxDate,
+          minDate = _this$props.minDate,
+          range$$1 = _this$props.range,
+          rangeAt = _this$props.rangeAt,
+          selected = _this$props.selected,
+          dateLimit = _this$props.dateLimit;
 
       var now = moment();
-      var _moment = _this.state.moment;
+      var _moment = _this.props.moment;
       var isPrevMonth = week === 0 && day > 7;
       var isNextMonth = week >= 4 && day <= 14;
       var month = isNextMonth ? _moment.clone().add(1, 'month') : isPrevMonth ? _moment.clone().subtract(1, 'month') : _moment.clone();
@@ -247,62 +352,29 @@ var Day = function (_Component) {
           onClick: _this.select.bind(_this, day, isSelected, isDisabled, isPrevMonth, isNextMonth) },
         day
       );
-    };
-
-    _this.state = {
-      moment: props.moment
-    };
-    return _this;
+    }, _temp), possibleConstructorReturn(_this, _ret);
   }
 
   createClass(Day, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(props) {
-      this.setState({
-        moment: props.moment
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
 
       var _props = this.props,
-          _props$weeks = _props.weeks,
-          weeks = _props$weeks === undefined ? WEEKS : _props$weeks,
-          _props$dayFormat = _props.dayFormat,
-          dayFormat = _props$dayFormat === undefined ? DAY_FORMAT : _props$dayFormat,
-          style = _props.style,
-          changePanel = _props.changePanel;
+          weeksOfYear = _props.weeksOfYear,
+          monthStarts = _props.monthStarts,
+          timePanel = _props.timePanel;
 
-      var _moment = this.state.moment;
-      var firstDay = _moment.clone().date(1).day();
+      var _moment = this.props.moment;
+      var firstDay = _moment.clone().date(monthStarts).day();
+
       var endOfThisMonth = _moment.clone().endOf('month').date();
       var endOfLastMonth = _moment.clone().subtract(1, 'month').endOf('month').date();
       var days = [].concat(range(endOfLastMonth - firstDay + 1, endOfLastMonth + 1), range(1, endOfThisMonth + 1), range(1, 42 - endOfThisMonth - firstDay + 1));
 
       return React__default.createElement(
         'div',
-        { className: 'calendar-days', style: style },
-        React__default.createElement(
-          'div',
-          { className: 'calendar-nav' },
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'prev-month', onClick: this.changeMonth.bind(this, 'prev') },
-            React__default.createElement('i', { className: 'fa fa-angle-left' })
-          ),
-          React__default.createElement(
-            'span',
-            { className: 'current-date', onClick: changePanel.bind(this, 'month', _moment) },
-            _moment.format(dayFormat)
-          ),
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'next-month', onClick: this.changeMonth.bind(this, 'next') },
-            React__default.createElement('i', { className: 'fa fa-angle-right' })
-          )
-        ),
+        null,
         React__default.createElement(
           'table',
           null,
@@ -312,7 +384,7 @@ var Day = function (_Component) {
             React__default.createElement(
               'tr',
               null,
-              weeks.map(function (week) {
+              weeksOfYear.map(function (week) {
                 return _this2._renderWeek(week);
               })
             )
@@ -328,7 +400,8 @@ var Day = function (_Component) {
               );
             })
           )
-        )
+        ),
+        timePanel && React__default.createElement(Time, this.props)
       );
     }
   }]);
@@ -338,36 +411,29 @@ var Day = function (_Component) {
 var Month = function (_Component) {
   inherits(Month, _Component);
 
-  function Month(props) {
+  function Month() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
     classCallCheck(this, Month);
 
-    var _this = possibleConstructorReturn(this, (Month.__proto__ || Object.getPrototypeOf(Month)).call(this, props));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    _this.changeYear = function (dir) {
-      var _moment = _this.state.moment.clone();
-
-      _this.setState({
-        moment: _moment[dir === 'prev' ? 'subtract' : 'add'](1, 'year')
-      });
-    };
-
-    _this.select = function (month, isDisabled) {
+    return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = Month.__proto__ || Object.getPrototypeOf(Month)).call.apply(_ref, [this].concat(args))), _this), _this.select = function (month, isDisabled) {
       if (isDisabled) return;
       var onSelect = _this.props.onSelect;
 
-      var _moment = _this.state.moment.clone();
+      var _moment = _this.props.moment.clone();
 
       _moment.month(month);
 
-      _this.setState({
-        moment: _moment
-      });
       onSelect(_moment);
-    };
-
-    _this._renderMonth = function (row, month, idx) {
+    }, _this._renderMonth = function (row, month, idx) {
       var now = moment();
-      var _moment = _this.state.moment;
+      var _moment = _this.props.moment;
       var _this$props = _this.props,
           maxDate = _this$props.maxDate,
           minDate = _this$props.minDate,
@@ -435,62 +501,28 @@ var Month = function (_Component) {
           onClick: _this.select.bind(_this, month, isDisabled) },
         months ? months[idx + row * 3] : month
       );
-    };
-
-    _this.state = {
-      moment: props.moment
-    };
-    return _this;
+    }, _temp), possibleConstructorReturn(_this, _ret);
   }
 
   createClass(Month, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(props) {
-      this.setState({
-        moment: props.moment
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
 
-      var _moment = this.state.moment;
-      var months = MONTHS;
-      var _props = this.props,
-          changePanel = _props.changePanel,
-          style = _props.style;
+      var monthsOfYear = this.props.monthsOfYear;
+      var style = this.props.style;
 
 
       return React__default.createElement(
         'div',
         { className: 'calendar-months', style: style },
         React__default.createElement(
-          'div',
-          { className: 'calendar-nav' },
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'prev-month', onClick: this.changeYear.bind(this, 'prev') },
-            React__default.createElement('i', { className: 'fa fa-angle-left' })
-          ),
-          React__default.createElement(
-            'span',
-            { className: 'current-date', onClick: changePanel.bind(this, 'year', _moment) },
-            _moment.format('YYYY')
-          ),
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'next-month', onClick: this.changeYear.bind(this, 'next') },
-            React__default.createElement('i', { className: 'fa fa-angle-right' })
-          )
-        ),
-        React__default.createElement(
           'table',
           null,
           React__default.createElement(
             'tbody',
             null,
-            chunk(months, 3).map(function (_months, idx) {
+            chunk(monthsOfYear, 3).map(function (_months, idx) {
               return React__default.createElement(
                 'tr',
                 { key: idx },
@@ -635,11 +667,7 @@ var Year = function (_Component) {
         React__default.createElement(
           'div',
           { className: 'calendar-nav' },
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'prev-month', onClick: this.changePeriod.bind(this, 'prev') },
-            React__default.createElement('i', { className: 'fa fa-angle-left' })
-          ),
+          React__default.createElement('button', { type: 'button', className: 'arrow prev', onClick: this.changePeriod.bind(this, 'prev') }),
           React__default.createElement(
             'span',
             { className: 'current-date disabled' },
@@ -647,11 +675,7 @@ var Year = function (_Component) {
             ' - ',
             firstYear + 9
           ),
-          React__default.createElement(
-            'button',
-            { type: 'button', className: 'next-month', onClick: this.changePeriod.bind(this, 'next') },
-            React__default.createElement('i', { className: 'fa fa-angle-right' })
-          )
+          React__default.createElement('button', { type: 'button', className: 'arrow next', onClick: this.changePeriod.bind(this, 'next') })
         ),
         React__default.createElement(
           'table',
@@ -674,8 +698,8 @@ var Year = function (_Component) {
   return Year;
 }(React.Component);
 
-// import moment from 'moment';
-var moment$1 = require('moment');
+//import moment from 'moment';
+var _moment = require('moment');
 
 var Calendar = function (_Component) {
   inherits(Calendar, _Component);
@@ -685,7 +709,7 @@ var Calendar = function (_Component) {
 
     var _this = possibleConstructorReturn(this, (Calendar.__proto__ || Object.getPrototypeOf(Calendar)).call(this, props));
 
-    _initialiseProps.call(_this);
+    _initialiseProps$1.call(_this);
 
     _this.state = {
       moment: _this.getCurrentMoment(props),
@@ -710,19 +734,33 @@ var Calendar = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      // const {moment} = this.state;
       var _props = this.props,
+          moment$$1 = _props.moment,
           weeks = _props.weeks,
           months = _props.months,
           dayFormat = _props.dayFormat,
+          _props$locale = _props.locale,
+          locale = _props$locale === undefined ? 'en' : _props$locale,
           style = _props.style,
           maxDate = _props.maxDate,
           minDate = _props.minDate,
           dateLimit = _props.dateLimit,
           range = _props.range,
-          rangeAt = _props.rangeAt;
+          rangeAt = _props.rangeAt,
+          _props$timePanel = _props.timePanel,
+          timePanel = _props$timePanel === undefined ? false : _props$timePanel;
+
+
+      _moment.locale(locale);
+      moment$$1.locale(locale);
+
+      var monthsOfYear = _moment.monthsShort();
+      var weeksOfYear = _moment.weekdaysMin(true);
+      var monthStarts = Math.abs(_moment.localeData(locale).firstDayOfWeek() - 1);
 
       var props = {
-        moment: this.state.moment,
+        moment: moment$$1,
         selected: this.props.moment,
         onSelect: this.handleSelect,
         changePanel: this.changePanel,
@@ -733,13 +771,12 @@ var Calendar = function (_Component) {
         minDate: minDate,
         dateLimit: dateLimit,
         range: range,
-        rangeAt: rangeAt
+        rangeAt: rangeAt,
+        timePanel: timePanel
       };
+
       var panel = this.state.panel;
 
-      var isDayPanel = panel === 'day';
-      var isMonthPanel = panel === 'month';
-      var isYearPanel = panel === 'year';
 
       return React__default.createElement(
         'div',
@@ -747,12 +784,39 @@ var Calendar = function (_Component) {
         React__default.createElement(
           'div',
           { className: 'calendar' },
-          React__default.createElement(Day, _extends({}, props, {
-            style: { display: isDayPanel ? 'block' : 'none' } })),
-          React__default.createElement(Month, _extends({}, props, {
-            style: { display: isMonthPanel ? 'block' : 'none' } })),
-          React__default.createElement(Year, _extends({}, props, {
-            style: { display: isYearPanel ? 'block' : 'none' } }))
+          React__default.createElement(
+            'div',
+            { className: 'calendar-days', style: style },
+            React__default.createElement(
+              'div',
+              { className: 'calendar-nav' },
+              React__default.createElement(
+                'div',
+                { className: 'control' },
+                React__default.createElement('button', { type: 'button', className: 'arrow prev', onClick: this.prevYear }),
+                React__default.createElement(
+                  'span',
+                  { className: 'current-date', onClick: panel === 'year' ? this.openDay : this.openYear },
+                  moment$$1.format('YYYY')
+                ),
+                React__default.createElement('button', { type: 'button', className: 'arrow next', onClick: this.nextYear })
+              ),
+              React__default.createElement(
+                'div',
+                { className: 'control' },
+                React__default.createElement('button', { type: 'button', className: 'arrow prev', onClick: this.prevMonth }),
+                React__default.createElement(
+                  'span',
+                  { className: 'current-date', onClick: panel === 'month' ? this.openDay : this.openMonth },
+                  moment$$1.format('MMMM')
+                ),
+                React__default.createElement('button', { type: 'button', className: 'arrow next', onClick: this.nextMonth })
+              )
+            ),
+            panel === 'day' && React__default.createElement(Day, _extends({}, props, { weeksOfYear: weeksOfYear, monthStarts: monthStarts })),
+            panel === 'month' && React__default.createElement(Month, _extends({}, props, { monthsOfYear: monthsOfYear })),
+            panel === 'year' && React__default.createElement(Year, props)
+          )
         )
       );
     }
@@ -760,14 +824,14 @@ var Calendar = function (_Component) {
   return Calendar;
 }(React.Component);
 
-var _initialiseProps = function _initialiseProps() {
+var _initialiseProps$1 = function _initialiseProps() {
   var _this2 = this;
 
   this.getCurrentMoment = function (props) {
     var range = props.range,
         rangeAt = props.rangeAt;
 
-    var now = _this2.state ? _this2.state.moment || moment$1() : moment$1();
+    var now = _this2.state ? _this2.state.moment || _moment() : _moment();
     var result = props.moment;
 
     if (result) {
@@ -789,7 +853,7 @@ var _initialiseProps = function _initialiseProps() {
         rangeAt = _props2.rangeAt,
         minPanel = _props2.minPanel;
 
-    var nextPanel = (panel === 'year' ? 'month' : 'day') === 'month' ? minPanel === 'year' ? 'year' : 'month' : minPanel === 'month' ? 'month' : 'day';
+
     var _selected = _this2.props.moment;
     var shouldChange = panel === minPanel;
 
@@ -810,7 +874,7 @@ var _initialiseProps = function _initialiseProps() {
       _selected = selected;
     }
 
-    _this2.changePanel(nextPanel, selected);
+    _this2.changePanel(panel !== 'time' ? 'day' : 'time', selected);
 
     if (shouldChange) {
       onChange && onChange(_selected, panel);
@@ -825,131 +889,74 @@ var _initialiseProps = function _initialiseProps() {
       panel: panel
     });
   };
+
+  this.openDay = function () {
+    return _this2.setState({ panel: 'day' });
+  };
+
+  this.openMonth = function () {
+    return _this2.setState({ panel: 'month' });
+  };
+
+  this.openYear = function () {
+    return _this2.setState({ panel: 'year' });
+  };
+
+  this.prevMonth = function () {
+    var _moment = _this2.state.moment.clone();
+    _this2.props.onChange(_moment.subtract(1, 'month'));
+  };
+
+  this.nextMonth = function () {
+    var _moment = _this2.state.moment.clone();
+    _this2.props.onChange(_moment.add(1, 'month'));
+  };
+
+  this.prevYear = function () {
+    var _moment = _this2.props.moment.clone();
+    _this2.props.onChange(_moment.subtract(1, 'year'));
+  };
+
+  this.nextYear = function () {
+    var _moment = _this2.state.moment.clone();
+    _this2.props.onChange(_moment.add(1, 'year'));
+  };
 };
 
-var Time = function (_Component) {
-  inherits(Time, _Component);
+var Picker = function (_Component) {
+  inherits(Picker, _Component);
 
-  function Time(props) {
-    classCallCheck(this, Time);
-
-    var _this = possibleConstructorReturn(this, (Time.__proto__ || Object.getPrototypeOf(Time)).call(this, props));
-
-    _initialiseProps$1.call(_this);
-
-    _this.state = {
-      moment: _this.getCurrentMoment(props)
-    };
-    return _this;
+  function Picker() {
+    classCallCheck(this, Picker);
+    return possibleConstructorReturn(this, (Picker.__proto__ || Object.getPrototypeOf(Picker)).apply(this, arguments));
   }
 
-  createClass(Time, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(props) {
-      this.setState({
-        moment: this.getCurrentMoment(props)
-      });
-    }
-  }, {
+  createClass(Picker, [{
     key: 'render',
     value: function render() {
-      var _moment = this.state.moment;
-      var style = this.props.style;
+      var _props$isOpen = this.props.isOpen,
+          isOpen = _props$isOpen === undefined ? true : _props$isOpen;
 
+
+      var className = classNames('datetime-picker', this.props.className);
+      var props = blacklist(this.props, 'className', 'splitPanel', 'isOpen');
 
       return React__default.createElement(
         'div',
-        { style: style },
-        React__default.createElement(
-          'div',
-          { className: 'time' },
-          React__default.createElement(
-            'div',
-            { className: 'show-time' },
-            React__default.createElement(
-              'span',
-              { className: 'text' },
-              _moment.format('HH')
-            ),
-            React__default.createElement(
-              'span',
-              { className: 'separater' },
-              ':'
-            ),
-            React__default.createElement(
-              'span',
-              { className: 'text' },
-              _moment.format('mm')
-            )
-          ),
-          React__default.createElement(
-            'div',
-            { className: 'sliders' },
-            React__default.createElement(
-              'span',
-              { className: 'slider-text' },
-              'Hours:'
-            ),
-            React__default.createElement(ReactSlider, { min: 0, max: 23, value: _moment.hour(), onChange: this.handleChange.bind(this, 'hours'), withBars: true }),
-            React__default.createElement(
-              'span',
-              { className: 'slider-text' },
-              'Minutes:'
-            ),
-            React__default.createElement(ReactSlider, { min: 0, max: 59, value: _moment.minute(), onChange: this.handleChange.bind(this, 'minutes'), withBars: true })
-          )
-        )
+        { className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
+            return evt.stopPropagation();
+          } },
+        React__default.createElement(Calendar, _extends({}, props, { isOpen: isOpen }))
       );
     }
   }]);
-  return Time;
+  return Picker;
 }(React.Component);
 
-var _initialiseProps$1 = function _initialiseProps() {
-  var _this2 = this;
-
-  this.getCurrentMoment = function (props) {
-    var range = props.range,
-        rangeAt = props.rangeAt;
-
-    var result = props.moment;
-
-    if (result) {
-      if (range) {
-        result = result[rangeAt] || moment().hours(0).minutes(0);
-      }
-    } else {
-      result = moment().hours(0).minutes(0);
-    }
-
-    return result;
-  };
-
-  this.handleChange = function (type, value) {
-    var _props = _this2.props,
-        onChange = _props.onChange,
-        range = _props.range,
-        rangeAt = _props.rangeAt;
-
-    var _moment = _this2.state.moment.clone();
-    var selected = _this2.props.moment;
-
-    _moment[type](value);
-
-    if (range) {
-      var copyed = selected ? Object.assign(selected, {}) : {};
-
-      copyed[rangeAt] = _moment;
-    } else {
-      selected = _moment;
-    }
-
-    _this2.setState({
-      moment: _moment
-    });
-    onChange && onChange(selected);
-  };
-};
+var CONFIRM_BUTTON_TEXT = 'Confirm';
+var START_DATE_TEXT = 'Start Date:';
+var END_DATE_TEXT = 'End Date:';
+var CUSTOM_BUTTON_TEXT = 'Custom';
 
 var isSameRange = function isSameRange(current, value) {
   return current.start && current.end && current.start.isSame(value.start, 'day') && current.end.isSame(value.end, 'day');
@@ -1036,77 +1043,6 @@ var Shortcuts = function (_Component) {
     }
   }]);
   return Shortcuts;
-}(React.Component);
-
-var Picker = function (_Component) {
-  inherits(Picker, _Component);
-
-  function Picker() {
-    classCallCheck(this, Picker);
-
-    var _this = possibleConstructorReturn(this, (Picker.__proto__ || Object.getPrototypeOf(Picker)).call(this));
-
-    _this.changePanel = function (panel) {
-      _this.setState({
-        panel: panel
-      });
-    };
-
-    _this.state = {
-      panel: 'calendar'
-    };
-    return _this;
-  }
-
-  createClass(Picker, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          _props$isOpen = _props.isOpen,
-          isOpen = _props$isOpen === undefined ? true : _props$isOpen,
-          shortcuts = _props.shortcuts,
-          splitPanel = _props.splitPanel,
-          _props$showTimePicker = _props.showTimePicker,
-          showTimePicker = _props$showTimePicker === undefined ? true : _props$showTimePicker,
-          _props$showCalendarPi = _props.showCalendarPicker,
-          showCalendarPicker = _props$showCalendarPi === undefined ? true : _props$showCalendarPi;
-      var panel = this.state.panel;
-
-      var isTimePanel = panel === 'time';
-      var isCalendarPanel = panel === 'calendar';
-      var className = classNames('datetime-picker', this.props.className, {
-        split: splitPanel
-      });
-      var props = blacklist(this.props, 'className', 'splitPanel', 'isOpen');
-
-      return React__default.createElement(
-        'div',
-        { className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
-            return evt.stopPropagation();
-          } },
-        shortcuts ? React__default.createElement(Shortcuts, props) : undefined,
-        splitPanel ? React__default.createElement(
-          'div',
-          { className: 'panel-nav' },
-          React__default.createElement(
-            'button',
-            { type: 'button', onClick: this.changePanel.bind(this, 'calendar'), className: isCalendarPanel ? 'active' : '' },
-            React__default.createElement('i', { className: 'fa fa-calendar-o' }),
-            'Date'
-          ),
-          React__default.createElement(
-            'button',
-            { type: 'button', onClick: this.changePanel.bind(this, 'time'), className: isTimePanel ? 'active' : '' },
-            React__default.createElement('i', { className: 'fa fa-clock-o' }),
-            'Time'
-          )
-        ) : undefined,
-        showCalendarPicker ? React__default.createElement(Calendar, _extends({}, props, { isOpen: isOpen, style: { display: isCalendarPanel || !splitPanel ? 'block' : 'none' } })) : undefined,
-        showTimePicker ? React__default.createElement(Time, _extends({}, props, { style: { display: isTimePanel || !splitPanel ? 'block' : 'none' } })) : undefined
-      );
-    }
-  }]);
-  return Picker;
 }(React.Component);
 
 var Range = function (_Component) {

@@ -8,10 +8,10 @@ var version = process.env.VERSION || require('../package.json').version;
 // Generate banner for current build
 var banner =
   '/*\n' +
-  ' * rc-datetime-picker v' + version + '\n' +
-  ' * https://github.com/AllenWooooo/rc-datetime-picker\n' +
+  ' * bd-datetime-picker v' + version + '\n' +
+  ' * https://github.com/dyadyaDima/bd-datetime-picker.git\n' +
   ' *\n' +
-  ' * (c) ' + new Date().getFullYear() + ' Allen Wu\n' +
+  ' * (c) ' + new Date().getFullYear() + '\n' +
   ' * License: MIT\n' +
   ' */';
 
@@ -46,7 +46,7 @@ function buildCJS() {
       format: 'cjs',
       banner: banner
     }).then(({ code }) => {
-      return write('dist/rc-datetime-picker.cjs.js', code);
+      return write('dist/bd-datetime-picker.cjs.js', code);
     });
   });
 }
@@ -62,9 +62,9 @@ function buildUmdDev() {
     bundle.generate({
       format: 'umd',
       banner: banner,
-      name: 'rc-datetime-picker'
+      name: 'bd-datetime-picker'
     }).then(({ code }) => {
-      return write('dist/rc-datetime-picker.js', code);
+      return write('dist/bd-datetime-picker.js', code);
     });
   });
 }
@@ -79,13 +79,13 @@ function buildUmdProd() {
   }).then(function (bundle) {
     bundle.generate({
       format: 'umd',
-      name: 'rc-datetime-picker'
+      name: 'bd-datetime-picker'
     }).then(({ code }) => {
       var minified = banner + '\n' + uglify.minify(code, {
         fromString: true,
         compress: true
       }).code;
-      return write('dist/rc-datetime-picker.min.js', minified);
+      return write('dist/bd-datetime-picker.min.js', minified);
     });
   });
 }
