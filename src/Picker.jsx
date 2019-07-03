@@ -14,8 +14,10 @@ class Picker extends Component {
     const className = classNames('datetime-picker', this.props.className);
     const props = blacklist(this.props, 'className', 'splitPanel', 'isOpen');
 
+    console.log(this.props); // eslint-disable-line
+
     return (
-      <div className={className} style={{display: isOpen ? 'block' : 'none'}} onClick={(evt) => evt.stopPropagation()}>
+      <div ref={this.props.ref || null} className={className} style={{display: isOpen ? 'block' : 'none'}} onClick={(evt) => evt.stopPropagation()}>
         <Calendar {...props} isOpen={isOpen} />
       </div>
     );

@@ -66,7 +66,7 @@ class Trigger extends Component {
   }
 
   togglePicker = (isOpen) => {
-    const {disabled} = this.props;
+    const {disabled, onClose} = this.props;
 
     if (disabled) return;
 
@@ -75,6 +75,10 @@ class Trigger extends Component {
       pos: this.getPosition()
     }, () => {
       window[!isOpen ? 'removeEventListener' : 'addEventListener']('click', this.handleDocumentClick, false);
+
+      if (!isOpen && typeof onClose === 'function') {
+        onClose();
+      }
     });
   }
 
@@ -110,6 +114,7 @@ class Trigger extends Component {
     return (
       <DatetimePicker
         {...props}
+        ref={this.pickerRef}
         className="datetime-picker-popup"
         isOpen={isOpen}
         onChange={this.handleChange}
@@ -122,7 +127,7 @@ class Trigger extends Component {
     const {isOpen} = this.state;
 
     return (
-      <div className={`datetime-trigger ${className}`} ref={this.pickerRef}>
+      <div className={`datetime-trigger ${className}`}>
         <div onClick={this.togglePicker.bind(this, !isOpen)} ref="trigger">{children}</div>
         {appendToBody ? this._renderPortal() : this._renderPicker(isOpen)}
       </div>

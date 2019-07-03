@@ -1,5 +1,5 @@
 /*
- * bd-datetime-picker v0.1.2
+ * bd-datetime-picker v0.1.3
  * https://github.com/dyadyaDima/bd-datetime-picker.git
  *
  * (c) 2019
@@ -943,9 +943,11 @@ var Picker = function (_Component) {
       var className = classNames('datetime-picker', this.props.className);
       var props = blacklist(this.props, 'className', 'splitPanel', 'isOpen');
 
+      console.log(this.props); // eslint-disable-line
+
       return React__default.createElement(
         'div',
-        { className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
+        { ref: this.props.ref || null, className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
             return evt.stopPropagation();
           } },
         React__default.createElement(Calendar, _extends({}, props, { isOpen: isOpen }))
@@ -1664,7 +1666,9 @@ var Trigger = function (_Component) {
 
       onChange && onChange(moment$$1);
     }, _this.togglePicker = function (isOpen) {
-      var disabled = _this.props.disabled;
+      var _this$props2 = _this.props,
+          disabled = _this$props2.disabled,
+          onClose = _this$props2.onClose;
 
 
       if (disabled) return;
@@ -1674,6 +1678,10 @@ var Trigger = function (_Component) {
         pos: _this.getPosition()
       }, function () {
         window[!isOpen ? 'removeEventListener' : 'addEventListener']('click', _this.handleDocumentClick, false);
+
+        if (!isOpen && typeof onClose === 'function') {
+          onClose();
+        }
       });
     }, _this.getPosition = function () {
       var elem = _this.refs.trigger;
@@ -1704,6 +1712,7 @@ var Trigger = function (_Component) {
       var props = blacklist(_this.props, 'className', 'appendToBody', 'children', 'onChange');
 
       return React__default.createElement(Picker, _extends({}, props, {
+        ref: _this.pickerRef,
         className: 'datetime-picker-popup',
         isOpen: isOpen,
         onChange: _this.handleChange
@@ -1744,7 +1753,7 @@ var Trigger = function (_Component) {
 
       return React__default.createElement(
         'div',
-        { className: 'datetime-trigger ' + className, ref: this.pickerRef },
+        { className: 'datetime-trigger ' + className },
         React__default.createElement(
           'div',
           { onClick: this.togglePicker.bind(this, !isOpen), ref: 'trigger' },
