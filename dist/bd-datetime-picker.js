@@ -1,5 +1,5 @@
 /*
- * bd-datetime-picker v0.1.3
+ * bd-datetime-picker v0.1.4
  * https://github.com/dyadyaDima/bd-datetime-picker.git
  *
  * (c) 2019
@@ -941,11 +941,9 @@ var Picker = function (_Component) {
       var className = classNames('datetime-picker', this.props.className);
       var props = blacklist(this.props, 'className', 'splitPanel', 'isOpen');
 
-      console.log(this.props); // eslint-disable-line
-
       return React__default.createElement(
         'div',
-        { ref: this.props.ref || null, className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
+        { className: className, style: { display: isOpen ? 'block' : 'none' }, onClick: function onClick(evt) {
             return evt.stopPropagation();
           } },
         React__default.createElement(Calendar, _extends({}, props, { isOpen: isOpen }))
@@ -1710,7 +1708,6 @@ var Trigger = function (_Component) {
       var props = blacklist(_this.props, 'className', 'appendToBody', 'children', 'onChange');
 
       return React__default.createElement(Picker, _extends({}, props, {
-        ref: _this.pickerRef,
         className: 'datetime-picker-popup',
         isOpen: isOpen,
         onChange: _this.handleChange
@@ -1751,7 +1748,7 @@ var Trigger = function (_Component) {
 
       return React__default.createElement(
         'div',
-        { className: 'datetime-trigger ' + className },
+        { className: 'datetime-trigger ' + className, ref: this.pickerRef },
         React__default.createElement(
           'div',
           { onClick: this.togglePicker.bind(this, !isOpen), ref: 'trigger' },

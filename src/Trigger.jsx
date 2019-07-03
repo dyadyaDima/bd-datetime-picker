@@ -114,7 +114,6 @@ class Trigger extends Component {
     return (
       <DatetimePicker
         {...props}
-        ref={this.pickerRef}
         className="datetime-picker-popup"
         isOpen={isOpen}
         onChange={this.handleChange}
@@ -127,7 +126,7 @@ class Trigger extends Component {
     const {isOpen} = this.state;
 
     return (
-      <div className={`datetime-trigger ${className}`}>
+      <div className={`datetime-trigger ${className}`} ref={this.pickerRef}>
         <div onClick={this.togglePicker.bind(this, !isOpen)} ref="trigger">{children}</div>
         {appendToBody ? this._renderPortal() : this._renderPicker(isOpen)}
       </div>
