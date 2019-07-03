@@ -1,6 +1,6 @@
 {
   "name": "bd-datetime-picker",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "React datetime picker by momentjs",
   "main": "dist/bd-datetime-picker.cjs.js",
   "keywords": [
